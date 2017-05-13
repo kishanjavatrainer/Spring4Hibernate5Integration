@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+		xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+		xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${db.driverClassName}"></property>
+		<property name="url" value="${db.url}"></property>
+		<property name="username" value="${db.username}"></property>
+		<property name="password" value="${db.password}"></property>
+	</bean>
+
+	<bean id="employeeService" class="com.infotech.service.impl.EmployeeServiceImpl">
+		<property name="employeeDAO" ref="employeeDAO"></property>
+	</bean>
+
+	<bean id="employeeDAO" class="com.infotech.dao.impl.EmployeeDAOImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="annotatedClasses">
+			<array>
+				<value>com.infotech.model.Employee</value>
+			</array>
+		</property>
+
+		<property name="hibernateProperties">
+
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+			</props>
+
+		</property>
+	</bean>
+
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>database.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+	<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+</beans>
